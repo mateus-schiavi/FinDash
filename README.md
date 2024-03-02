@@ -8,6 +8,6 @@ Os integrantes dos grupo estão listados abaixo:
 2. Cassia Conceição da Silva
 3. Elisete Magalhães da Silva
 4. Luis Henrique Ponciano Marques de Oliveira
-5. Marcone Souza
-6. Mateus de Sousa Schiavi
+5. Mateus de Sousa Schiavi
+6. Rafael Marcos Batista dos Santos
 7. Rafael Paoleschi Iurovschi
