@@ -1,14 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Finance Dashboard</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-</head>
-<body>
-    <h1>Finance Dashboard</h1>
-    <div id="graph">
-        {{ graph_html | safe }}
-    </div>
-</body>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Finance Dashboard</title>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    </head>
+
+    <body class="bg-gray-100 p-10">
+        <h1 class="text-2xl mb-4">Finance Dashboard</h1>
+
+        <form method="POST">
+            <label class="block mb-2">Revenue:</label>
+            <input type="number" name="revenue" class="border-gray-400 border p-2 mb-4" required>
+
+            <label class="block mb-2">Expenses:</label>
+            <input type="number" name="expenses" class="border-gray-400 border p-2 mb-4" required>
+
+            <button type="submit"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Submit</button>
+        </form>
+
+        <div id="graph" class="mt-8">
+            {{ graph_html | safe }}
+        </div>
+    </body>
+
 </html>
