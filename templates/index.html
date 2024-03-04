@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,6 +26,12 @@
         <div id="graph" class="mt-8">
             {{ graph_html | safe }}
         </div>
+
+        <!-- Adiciona um botão de logout -->
+        <form action="{{ url_for('logout') }}" method="post">
+            <button type="submit"
+                class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">Logout</button>
+        </form>
     </body>
 
 </html>

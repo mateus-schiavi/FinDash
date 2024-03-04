@@ -16,7 +16,3 @@ except mysql.connector.Error as e:
     # Se ocorrer algum erro ao conectar, exibe a mensagem de erro
     print(f"Erro ao conectar: {e}")
 
-finally:
-    # Sempre fecha a conexão, independentemente de ter sido bem-sucedida ou não
-    if 'conn' in locals():
-        conn.close()
