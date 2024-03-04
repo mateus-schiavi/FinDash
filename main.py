@@ -8,7 +8,7 @@ import datetime
 app = Flask(__name__)
 
 # Chave secreta para proteger as sessões do Flask
-app.secret_key = "sua_chave_secreta"
+app.secret_key = "15be550cae6051d0318d82bd5b2dbe8d6f54c0ecd8c93b31"
 
 # Configuração da URI do banco de dados
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/projeto_integrador'
