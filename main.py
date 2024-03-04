@@ -4,7 +4,6 @@ import plotly.express as px
 import pandas as pd
 import hashlib
 import datetime
-from conexao import conn
 
 app = Flask(__name__)
 
@@ -14,23 +13,22 @@ app.secret_key = "sua_chave_secreta"
 # Configuração da URI do banco de dados
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/projeto_integrador'
 
-from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
+# Inicialização do SQLAlchemy
+db = SQLAlchemy(app)
 
-db = SQLAlchemy()
-
+# Definição das classes de modelo
 class User(db.Model):
     __tablename__ = 'users'
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False)
-    password = db.Column(db.String(100), nullable=False)  # Remember to encrypt the password before storing it in the database
-    registration_date = db.Column(db.Date, nullable=False, default=datetime.utcnow())
+    password = db.Column(db.String(100), nullable=False)
+    registration_date = db.Column(db.Date, nullable=False, default=datetime.datetime.utcnow())
 
 class Expense(db.Model):
     __tablename__ = 'expenses'
     expense_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('usuarios.user_id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     description = db.Column(db.String(255), nullable=False)
     amount = db.Column(db.Numeric(10, 2), nullable=False)
     date = db.Column(db.Date, nullable=False)
@@ -40,7 +38,7 @@ class Expense(db.Model):
 class Income(db.Model):
     __tablename__ = 'income'
     income_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('usuarios.user_id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     description = db.Column(db.String(255), nullable=False)
     amount = db.Column(db.Numeric(10, 2), nullable=False)
     date = db.Column(db.Date, nullable=False)
@@ -49,7 +47,7 @@ class Income(db.Model):
 class Budget(db.Model):
     __tablename__ = 'budget'
     budget_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('usuarios.user_id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     category = db.Column(db.String(100))
     spending_limit = db.Column(db.Numeric(10, 2), nullable=False)
     period = db.Column(db.String(50))
@@ -97,7 +95,7 @@ def login():
     
     # Manipula os dados enviados pelo formulário de login
     if request.method == 'POST':
-        name = request.form['name']
+        name = request.form['username']  # Alterado para corresponder ao campo 'username' do formulário HTML
         password = request.form['password']
         hashed_password = hash_password(password)
         user = User.query.filter_by(name=name).first()
@@ -139,9 +137,14 @@ def register():
 
 @app.route('/logout', methods=['POST'])
 def logout():
-    # Remove a chave 'name' da sessão, encerrando a sessão do usuário
-    session.pop('name', None)
+    try:
+        # Remove a chave 'name' da sessão, encerrando a sessão do usuário
+        session.pop('name')
+    except KeyError:
+        # Se a chave 'name' não existir na sessão, não faz nada
+        pass
     return redirect(url_for('login'))
+
 
 
 # Executa o aplicativo Flask
