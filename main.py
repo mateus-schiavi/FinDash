@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
-import plotly.express as px
+import plotly.graph_objs as go
 import pandas as pd
 import hashlib
 import datetime
 import conexao
+
 
 app = Flask(__name__)
 
@@ -31,7 +32,6 @@ class Expense(db.Model):
     expense_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     description = db.Column(db.String(255), nullable=False)
-    amount = db.Column(db.Numeric(10, 2), nullable=False)
     date = db.Column(db.Date, nullable=False)
     category = db.Column(db.String(100))
     payment_method = db.Column(db.String(100))
@@ -46,21 +46,13 @@ class Income(db.Model):
     source = db.Column(db.String(100))
 
 class Budget(db.Model):
-    __tablename__ = 'budget'
+    __tablename__ = 'budgets'
     budget_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     category = db.Column(db.String(100))
     spending_limit = db.Column(db.Numeric(10, 2), nullable=False)
     period = db.Column(db.String(50))
 
-
-# DataFrame para armazenar os dados financeiros
-data = {
-    'Date': pd.date_range(start='2024-01-01', periods=10),
-    'Revenue': [100, 110, 120, 130, 140, 150, 160, 170, 180, 190],
-    'Expenses': [80, 85, 90, 95, 100, 105, 110, 115, 120, 125]
-}
-df = pd.DataFrame(data)
 
 # Função para hashear a senha do usuário
 def hash_password(password):
@@ -73,18 +65,35 @@ def index():
     if 'name' not in session:
         return redirect(url_for('login'))
     
-    # Manipula os dados enviados pelo formulário
-    if request.method == 'POST':
-        revenue = float(request.form['revenue'])
-        expenses = float(request.form['expenses'])
-        new_data = {'Date': pd.Timestamp.now(), 'Revenue': revenue, 'Expenses': expenses}
-        df.loc[len(df)] = new_data
+    # Consulta orçamentos do usuário logado
+    budgets = Budget.query.filter_by(user_id=session['user_id']).all()
+    categories = [budget.category for budget in budgets]
+    spending_limits = [budget.spending_limit for budget in budgets]
 
-    # Cria visualização Plotly do dashboard
-    fig = px.line(df, x='Date', y=['Revenue', 'Expenses'], title='Finance Dashboard')
+    # Define as cores para cada tipo de dado
+    colors = ['#1f77b4', '#ff7f0e', '#2ca02c']  # Azul, laranja e verde
+
+    # Cria um gráfico com 3 séries de pontos para despesas, orçamento e receitas
+    fig = go.Figure()
+
+    # Adiciona uma série de pontos para despesas
+    fig.add_trace(go.Scatter(x=categories, y=spending_limits, mode='markers', name='Expenses', marker=dict(color=colors[0], size=10)))
+
+    # Adiciona uma série de pontos para o orçamento (apenas para demonstração, ajuste conforme necessário)
+    fig.add_trace(go.Scatter(x=categories, y=[1000]*len(categories), mode='markers', name='Budget', marker=dict(color=colors[1], size=10)))
+
+    # Adiciona uma série de pontos para receitas (apenas para demonstração, ajuste conforme necessário)
+    fig.add_trace(go.Scatter(x=categories, y=[800]*len(categories), mode='markers', name='Income', marker=dict(color=colors[2], size=10)))
+
+    # Define layout do gráfico
+    fig.update_layout(title='Finance Dashboard',
+                      xaxis_title='Category',
+                      yaxis_title='Amount')
+
+    # Converte o gráfico para HTML
     graph_html = fig.to_html(full_html=False)
 
-    # Renderiza o template HTML do dashboard
+    # Renderiza o template HTML do dashboard, passando os dados do gráfico
     return render_template('index.html', graph_html=graph_html)
 
 # Rota de login para autenticar os usuários
@@ -103,6 +112,7 @@ def login():
         if user and user.password == hashed_password:
             # Autentica o usuário e redireciona para o dashboard
             session['name'] = name
+            session['user_id'] = user.user_id  # Armazena o ID do usuário na sessão
             return redirect(url_for('index'))
         else:
             # Exibe mensagem de erro se as credenciais forem inválidas
@@ -141,12 +151,11 @@ def logout():
     try:
         # Remove a chave 'name' da sessão, encerrando a sessão do usuário
         session.pop('name')
+        session.pop('user_id')  # Remove também o ID do usuário da sessão
     except KeyError:
         # Se a chave 'name' não existir na sessão, não faz nada
         pass
     return redirect(url_for('login'))
-
-
 
 # Executa o aplicativo Flask
 if __name__ == '__main__':
