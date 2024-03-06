@@ -4,6 +4,7 @@ import plotly.express as px
 import pandas as pd
 import hashlib
 import datetime
+import conexao
 
 app = Flask(__name__)
 
