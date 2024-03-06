@@ -6,7 +6,6 @@ import hashlib
 import datetime
 import conexao
 
-
 app = Flask(__name__)
 
 # Chave secreta para proteger as sessões do Flask
@@ -32,6 +31,7 @@ class Expense(db.Model):
     expense_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     description = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.Numeric(10, 2), nullable=False)
     date = db.Column(db.Date, nullable=False)
     category = db.Column(db.String(100))
     payment_method = db.Column(db.String(100))
@@ -53,10 +53,36 @@ class Budget(db.Model):
     spending_limit = db.Column(db.Numeric(10, 2), nullable=False)
     period = db.Column(db.String(50))
 
-
 # Função para hashear a senha do usuário
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
+
+# Funções CRUD para a entidade de usuário
+def criar_usuario(name, email, password):
+    hashed_password = hash_password(password)
+    novo_usuario = User(name=name, email=email, password=hashed_password)
+    db.session.add(novo_usuario)
+    db.session.commit()
+
+def ler_usuario_por_id(user_id):
+    usuario = User.query.get(user_id)
+    return usuario
+
+def ler_usuario_por_nome(name):
+    usuario = User.query.filter_by(name=name).first()
+    return usuario
+
+def atualizar_usuario(user_id, name, email, password):
+    usuario = User.query.get(user_id)
+    usuario.name = name
+    usuario.email = email
+    usuario.password = hash_password(password)
+    db.session.commit()
+
+def excluir_usuario(user_id):
+    usuario = User.query.get(user_id)
+    db.session.delete(usuario)
+    db.session.commit()
 
 # Rota principal que exibe o dashboard financeiro
 @app.route('/', methods=['GET', 'POST'])
@@ -77,18 +103,18 @@ def index():
     fig = go.Figure()
 
     # Adiciona uma série de pontos para despesas
-    fig.add_trace(go.Scatter(x=categories, y=spending_limits, mode='markers', name='Expenses', marker=dict(color=colors[0], size=10)))
+    fig.add_trace(go.Scatter(x=categories, y=spending_limits, mode='markers', name='Despesas', marker=dict(color=colors[0], size=10)))
 
     # Adiciona uma série de pontos para o orçamento (apenas para demonstração, ajuste conforme necessário)
-    fig.add_trace(go.Scatter(x=categories, y=[1000]*len(categories), mode='markers', name='Budget', marker=dict(color=colors[1], size=10)))
+    fig.add_trace(go.Scatter(x=categories, y=[1000]*len(categories), mode='markers', name='Orçamento', marker=dict(color=colors[1], size=10)))
 
     # Adiciona uma série de pontos para receitas (apenas para demonstração, ajuste conforme necessário)
-    fig.add_trace(go.Scatter(x=categories, y=[800]*len(categories), mode='markers', name='Income', marker=dict(color=colors[2], size=10)))
+    fig.add_trace(go.Scatter(x=categories, y=[800]*len(categories), mode='markers', name='Receitas', marker=dict(color=colors[2], size=10)))
 
     # Define layout do gráfico
-    fig.update_layout(title='Finance Dashboard',
-                      xaxis_title='Category',
-                      yaxis_title='Amount')
+    fig.update_layout(title='Dashboard Financeiro',
+                      xaxis_title='Categoria',
+                      yaxis_title='Valor')
 
     # Converte o gráfico para HTML
     graph_html = fig.to_html(full_html=False)
@@ -107,16 +133,15 @@ def login():
     if request.method == 'POST':
         name = request.form['username']  # Alterado para corresponder ao campo 'username' do formulário HTML
         password = request.form['password']
-        hashed_password = hash_password(password)
-        user = User.query.filter_by(name=name).first()
-        if user and user.password == hashed_password:
+        usuario = ler_usuario_por_nome(name)
+        if usuario and usuario.password == hash_password(password):
             # Autentica o usuário e redireciona para o dashboard
             session['name'] = name
-            session['user_id'] = user.user_id  # Armazena o ID do usuário na sessão
+            session['user_id'] = usuario.user_id  # Armazena o ID do usuário na sessão
             return redirect(url_for('index'))
         else:
             # Exibe mensagem de erro se as credenciais forem inválidas
-            return render_template('login.html', error='Invalid name or password')
+            return render_template('login.html', error='Nome ou senha inválidos')
     else:
         # Renderiza o template HTML da página de login
         return render_template('login.html', error='')
@@ -131,21 +156,20 @@ def register():
     # Manipula os dados enviados pelo formulário de registro
     if request.method == 'POST':
         name = request.form['name']
+        email = request.form['email']
         password = request.form['password']
-        hashed_password = hash_password(password)
-        if not User.query.filter_by(name=name).first():
+        if not ler_usuario_por_nome(name):
             # Cria um novo usuário no banco de dados
-            new_user = User(name=name, password=hashed_password)
-            db.session.add(new_user)
-            db.session.commit()
+            criar_usuario(name, email, password)
             return redirect(url_for('login'))
         else:
             # Exibe mensagem de erro se o nome de usuário já existe
-            return render_template('register.html', error='name already exists')
+            return render_template('register.html', error='Nome de usuário já existe')
     else:
         # Renderiza o template HTML da página de registro
         return render_template('register.html', error='')
 
+# Rota de logout para encerrar a sessão do usuário
 @app.route('/logout', methods=['POST'])
 def logout():
     try:
@@ -157,6 +181,56 @@ def logout():
         pass
     return redirect(url_for('login'))
 
-# Executa o aplicativo Flask
+# Rota para adicionar receita
+@app.route('/add_income', methods=['POST'])
+def add_income():
+    if 'name' not in session:
+        return redirect(url_for('login'))
+
+    description = request.form['description']
+    amount = request.form['amount']
+    date = request.form['date']
+    source = request.form['source']
+
+    new_income = Income(user_id=session['user_id'], description=description, amount=amount, date=date, source=source)
+    db.session.add(new_income)
+    db.session.commit()
+
+    return redirect(url_for('index'))
+
+# Rota para adicionar despesa
+@app.route('/add_expense', methods=['POST'])
+def add_expense():
+    if 'name' not in session:
+        return redirect(url_for('login'))
+
+    description = request.form['description']
+    amount = request.form['amount']
+    date = request.form['date']
+    category = request.form['category']
+    payment_method = request.form['payment_method']
+
+    new_expense = Expense(user_id=session['user_id'], description=description, amount=amount, date=date, category=category, payment_method=payment_method)
+    db.session.add(new_expense)
+    db.session.commit()
+
+    return redirect(url_for('index'))
+
+# Rota para adicionar orçamento
+@app.route('/add_budget', methods=['POST'])
+def add_budget():
+    if 'name' not in session:
+        return redirect(url_for('login'))
+
+    category = request.form['category']
+    spending_limit = request.form['spending_limit']
+    period = request.form['period']
+
+    new_budget = Budget(user_id=session['user_id'], category=category, spending_limit=spending_limit, period=period)
+    db.session.add(new_budget)
+    db.session.commit()
+
+    return redirect(url_for('index'))
+
 if __name__ == '__main__':
     app.run(debug=True)
