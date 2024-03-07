@@ -85,6 +85,7 @@ def excluir_usuario(user_id):
     db.session.commit()
 
 # Rota principal que exibe o dashboard financeiro
+# Rota principal que exibe o dashboard financeiro
 @app.route('/', methods=['GET', 'POST'])
 def index():
     # Verifica se o usuário está autenticado
@@ -99,31 +100,33 @@ def index():
     categories = [budget.category for budget in budgets]
     spending_limits = [budget.spending_limit for budget in budgets]
 
-    # Define as cores para cada tipo de dado
-    colors = ['#1f77b4', '#ff7f0e', '#2ca02c']  # Azul, laranja e verde
-
-    # Cria um gráfico com 3 séries de pontos para despesas, orçamento e receitas
+    # Cria um gráfico com 3 séries de barras para despesas, orçamento e receitas
     fig = go.Figure()
 
-    # Adiciona uma série de pontos para despesas
-    fig.add_trace(go.Scatter(x=categories, y=spending_limits, mode='markers', name='Despesas', marker=dict(color=colors[0], size=10)))
+    # Adiciona uma série de barras para despesas
+    fig.add_trace(go.Bar(x=categories, y=expenses, name='Despesas', marker_color='#1f77b4', width=0.05))
 
-    # Adiciona uma série de pontos para o orçamento (apenas para demonstração, ajuste conforme necessário)
-    fig.add_trace(go.Scatter(x=categories, y=[1000]*len(categories), mode='markers', name='Orçamento', marker=dict(color=colors[1], size=10)))
+    # Adiciona uma série de barras para o orçamento
+    fig.add_trace(go.Bar(x=categories, y=spending_limits, name='Orçamento', marker_color='#ff7f0e', width=0.05))
 
-    # Adiciona uma série de pontos para receitas (apenas para demonstração, ajuste conforme necessário)
-    fig.add_trace(go.Scatter(x=categories, y=[800]*len(categories), mode='markers', name='Receitas', marker=dict(color=colors[2], size=10)))
+    # Adiciona uma série de barras para receitas (valores fixos para demonstração)
+    revenue_values = [800] * len(categories)  # Usando 800 como valor fixo para todas as categorias
+    fig.add_trace(go.Bar(x=categories, y=revenue_values, name='Receitas', marker_color='#2ca02c', width=0.05))
 
     # Define layout do gráfico
-    fig.update_layout(title='Dashboard Financeiro',
-                      xaxis_title='Categoria',
-                      yaxis_title='Valor')
+    fig.update_layout(title='Dashboard Financeiro', xaxis_title='Categoria', yaxis_title='Valor')
 
     # Converte o gráfico para HTML
     graph_html = fig.to_html(full_html=False)
 
+
     # Renderiza o template HTML do dashboard, passando os dados do gráfico e das despesas
     return render_template('index.html', graph_html=graph_html, expenses=expenses)
+
+
+
+
+
 
 # Rota de login para autenticar os usuários
 @app.route('/login', methods=['GET', 'POST'])
