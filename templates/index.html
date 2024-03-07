@@ -63,6 +63,40 @@
                 Orçamento</button>
         </form>
 
+        <!-- Exibição das despesas -->
+        <div class="mt-8">
+            <h2 class="text-lg mb-2">Despesas</h2>
+            <table class="border-collapse border border-gray-400">
+                <thead>
+                    <tr>
+                        <th class="border border-gray-400 px-4 py-2">Descrição</th>
+                        <th class="border border-gray-400 px-4 py-2">Valor</th>
+                        <th class="border border-gray-400 px-4 py-2">Data</th>
+                        <th class="border border-gray-400 px-4 py-2">Categoria</th>
+                        <th class="border border-gray-400 px-4 py-2">Método de Pagamento</th>
+                        <th class="border border-gray-400 px-4 py-2">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expense in expenses %}
+                    <tr>
+                        <td class="border border-gray-400 px-4 py-2">{{ expense.description }}</td>
+                        <td class="border border-gray-400 px-4 py-2">{{ expense.amount }}</td>
+                        <td class="border border-gray-400 px-4 py-2">{{ expense.date }}</td>
+                        <td class="border border-gray-400 px-4 py-2">{{ expense.category }}</td>
+                        <td class="border border-gray-400 px-4 py-2">{{ expense.payment_method }}</td>
+                        <td class="border border-gray-400 px-4 py-2">
+                            <form action="{{ url_for('delete_expense', expense_id=expense.expense_id) }}" method="post">
+                                <button type="submit"
+                                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
         <!-- Adiciona um botão de logout -->
         <form action="{{ url_for('logout') }}" method="post">
             <button type="submit"

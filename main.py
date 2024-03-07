@@ -31,7 +31,7 @@ class Expense(db.Model):
     expense_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     description = db.Column(db.String(255), nullable=False)
-    amount = db.Column(db.Numeric(10, 2), nullable=False)
+    value = db.Column(db.Numeric(10, 2), nullable=False)
     date = db.Column(db.Date, nullable=False)
     category = db.Column(db.String(100))
     payment_method = db.Column(db.String(100))
@@ -41,7 +41,7 @@ class Income(db.Model):
     income_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     description = db.Column(db.String(255), nullable=False)
-    amount = db.Column(db.Numeric(10, 2), nullable=False)
+    value = db.Column(db.Numeric(10, 2), nullable=False)
     date = db.Column(db.Date, nullable=False)
     source = db.Column(db.String(100))
 
@@ -91,6 +91,9 @@ def index():
     if 'name' not in session:
         return redirect(url_for('login'))
     
+    # Consulta despesas do usuário logado
+    expenses = Expense.query.filter_by(user_id=session['user_id']).all()
+
     # Consulta orçamentos do usuário logado
     budgets = Budget.query.filter_by(user_id=session['user_id']).all()
     categories = [budget.category for budget in budgets]
@@ -119,8 +122,9 @@ def index():
     # Converte o gráfico para HTML
     graph_html = fig.to_html(full_html=False)
 
-    # Renderiza o template HTML do dashboard, passando os dados do gráfico
-    return render_template('index.html', graph_html=graph_html)
+    # Renderiza o template HTML do dashboard, passando os dados do gráfico e das despesas
+    return render_template('index.html', graph_html=graph_html, expenses=expenses)
+
 
 # Rota de login para autenticar os usuários
 @app.route('/login', methods=['GET', 'POST'])
@@ -188,11 +192,11 @@ def add_income():
         return redirect(url_for('login'))
 
     description = request.form['description']
-    amount = request.form['amount']
+    value = request.form['value']
     date = request.form['date']
     source = request.form['source']
 
-    new_income = Income(user_id=session['user_id'], description=description, amount=amount, date=date, source=source)
+    new_income = Income(user_id=session['user_id'], description=description, value=value, date=date, source=source)
     db.session.add(new_income)
     db.session.commit()
 
@@ -205,12 +209,12 @@ def add_expense():
         return redirect(url_for('login'))
 
     description = request.form['description']
-    amount = request.form['amount']
+    value = request.form['value']
     date = request.form['date']
     category = request.form['category']
     payment_method = request.form['payment_method']
 
-    new_expense = Expense(user_id=session['user_id'], description=description, amount=amount, date=date, category=category, payment_method=payment_method)
+    new_expense = Expense(user_id=session['user_id'], description=description, value=value, date=date, category=category, payment_method=payment_method)
     db.session.add(new_expense)
     db.session.commit()
 
@@ -228,6 +232,23 @@ def add_budget():
 
     new_budget = Budget(user_id=session['user_id'], category=category, spending_limit=spending_limit, period=period)
     db.session.add(new_budget)
+    db.session.commit()
+
+    return redirect(url_for('index'))
+
+# Rota para excluir despesa
+@app.route('/delete_expense/<int:expense_id>', methods=['POST'])
+def delete_expense(expense_id):
+    if 'name' not in session:
+        return redirect(url_for('login'))
+
+    # Verifica se a despesa pertence ao usuário logado
+    expense = Expense.query.filter_by(expense_id=expense_id, user_id=session['user_id']).first()
+    if not expense:
+        return redirect(url_for('index'))  # Redireciona se a despesa não existir ou não pertencer ao usuário
+
+    # Remove a despesa do banco de dados
+    db.session.delete(expense)
     db.session.commit()
 
     return redirect(url_for('index'))
