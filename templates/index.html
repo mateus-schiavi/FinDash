@@ -63,30 +63,93 @@
                 Orçamento</button>
         </form>
 
-        <!-- Exibição das despesas -->
+<!-- Exibição das despesas -->
+<div class="mt-8">
+    <h2 class="text-lg mb-2">Despesas</h2>
+    <table class="border-collapse border border-gray-400">
+        <thead>
+            <tr>
+                <th class="border border-gray-400 px-4 py-2">Descrição</th>
+                <th class="border border-gray-400 px-4 py-2">Valor</th>
+                <th class="border border-gray-400 px-4 py-2">Data</th>
+                <th class="border border-gray-400 px-4 py-2">Categoria</th>
+                <th class="border border-gray-400 px-4 py-2">Método de Pagamento</th>
+                <th class="border border-gray-400 px-4 py-2">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in expenses %}
+            <tr>
+                <td class="border border-gray-400 px-4 py-2">{{ expense.description }}</td>
+                <td class="border border-gray-400 px-4 py-2">{{ expense.value }}</td>
+                <td class="border border-gray-400 px-4 py-2">{{ expense.date }}</td>
+                <td class="border border-gray-400 px-4 py-2">{{ expense.category }}</td>
+                <td class="border border-gray-400 px-4 py-2">{{ expense.payment_method }}</td>
+                <td class="border border-gray-400 px-4 py-2">
+                    <form action="{{ url_for('delete_expense', expense_id=expense.expense_id) }}" method="post">
+                        <button type="submit"
+                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+        <!-- Exibição das receitas -->
         <div class="mt-8">
-            <h2 class="text-lg mb-2">Despesas</h2>
+            <h2 class="text-lg mb-2">Receitas</h2>
             <table class="border-collapse border border-gray-400">
                 <thead>
                     <tr>
                         <th class="border border-gray-400 px-4 py-2">Descrição</th>
                         <th class="border border-gray-400 px-4 py-2">Valor</th>
                         <th class="border border-gray-400 px-4 py-2">Data</th>
-                        <th class="border border-gray-400 px-4 py-2">Categoria</th>
-                        <th class="border border-gray-400 px-4 py-2">Método de Pagamento</th>
+                        <th class="border border-gray-400 px-4 py-2">Fonte</th>
                         <th class="border border-gray-400 px-4 py-2">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for expense in expenses %}
+                    {% for income in incomes %}
                     <tr>
-                        <td class="border border-gray-400 px-4 py-2">{{ expense.description }}</td>
-                        <td class="border border-gray-400 px-4 py-2">{{ expense.amount }}</td>
-                        <td class="border border-gray-400 px-4 py-2">{{ expense.date }}</td>
-                        <td class="border border-gray-400 px-4 py-2">{{ expense.category }}</td>
-                        <td class="border border-gray-400 px-4 py-2">{{ expense.payment_method }}</td>
+                        <td class="border border-gray-400 px-4 py-2">{{ income.description }}</td>
+                        <td class="border border-gray-400 px-4 py-2">{{ income.amount }}</td>
+                        <td class="border border-gray-400 px-4 py-2">{{ income.date }}</td>
+                        <td class="border border-gray-400 px-4 py-2">{{ income.source }}</td>
                         <td class="border border-gray-400 px-4 py-2">
-                            <form action="{{ url_for('delete_expense', expense_id=expense.expense_id) }}" method="post">
+                            <form action="{{ url_for('delete_income', income_id=income.income_id) }}" method="post">
+                                <button type="submit"
+                                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Exibição dos orçamentos -->
+        <div class="mt-8">
+            <h2 class="text-lg mb-2">Orçamentos</h2>
+            <table class="border-collapse border border-gray-400">
+                <thead>
+                    <tr>
+                        <th class="border border-gray-400 px-4 py-2">Categoria</th>
+                        <th class="border border-gray-400 px-4 py-2">Limite de Gastos</th>
+                        <th class="border border-gray-400 px-4 py-2">Período</th>
+                        <th class="border border-gray-400 px-4 py-2">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for budget in budgets %}
+                    <tr>
+                        <td class="border border-gray-400 px-4 py-2">{{ budget.category }}</td>
+                        <td class="border border-gray-400 px-4 py-2">{{ budget.spending_limit }}</td>
+                        <td class="border border-gray-400 px-4 py-2">{{ budget.period }}</td>
+                        <td class="border border-gray-400 px-4 py-2">
+                            <form action="{{ url_for('delete_budget', budget_id=budget.budget_id) }}" method="post">
                                 <button type="submit"
                                     class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Excluir</button>
                             </form>

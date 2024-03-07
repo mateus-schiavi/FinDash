@@ -125,7 +125,6 @@ def index():
     # Renderiza o template HTML do dashboard, passando os dados do gráfico e das despesas
     return render_template('index.html', graph_html=graph_html, expenses=expenses)
 
-
 # Rota de login para autenticar os usuários
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -252,6 +251,8 @@ def delete_expense(expense_id):
     db.session.commit()
 
     return redirect(url_for('index'))
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
