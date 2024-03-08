@@ -1,46 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <title>Login</title>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    </head>
 
-<body class="bg-gray-100 flex justify-center items-center h-screen">
-    <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <h1 class="text-2xl mb-4">Login</h1>
+    <body class="bg-gray-100 flex justify-center items-center h-screen">
+        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <h1 class="text-2xl mb-4">Login</h1>
 
-        {% if error %}
-        <p class="text-red-500">{{ error }}</p>
-        {% endif %}
+            {% if error %}
+            <p class="text-red-500">{{ error }}</p>
+            {% endif %}
 
-        <form method="POST" action="{{ url_for('login') }}">
-            <!-- Alterado para POST e apontando para a rota Flask 'login' -->
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-                    Username:
-                </label>
-                <input type="text" name="username" id="username" class="border-gray-400 border p-2 w-full" required>
-            </div>
+            <form method="POST" action="{{ url_for('login') }}">
+                <div class="mb-4">
+                    <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username:</label>
+                    <input type="text" id="username" name="username" class="border-gray-400 border p-2 w-full" required>
+                </div>
 
-            <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-                    Password:
-                </label>
-                <input type="password" name="password" id="password" class="border-gray-400 border p-2 w-full"
-                    required>
-            </div>
+                <div class="mb-6">
+                    <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
+                    <input type="password" id="password" name="password" class="border-gray-400 border p-2 w-full"
+                        required>
+                </div>
 
-            <div class="flex items-center justify-between">
-                <button type="submit"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Login</button>
-            </div>
-        </form>
+                <div class="flex items-center justify-between">
+                    <button type="submit"
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Login</button>
+                </div>
+            </form>
 
-        <!-- Adiciona um link para a página de registro -->
-        <p class="mt-4">Don't have an account? <a href="{{ url_for('register') }}" class="text-blue-500">Register here</a></p>
-    </div>
-</body>
+            <!-- Adiciona um link para a página de registro -->
+            <p class="mt-4">Don't have an account? <a href="{{ url_for('register') }}" class="text-blue-500">Register
+                    here</a></p>
+        </div>
+    </body>
 
 </html>

@@ -1,11 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 import plotly.graph_objs as go
-import pandas as pd
 import hashlib
 import datetime
 import conexao
-
 app = Flask(__name__)
 
 # Chave secreta para proteger as sessões do Flask
@@ -64,27 +62,15 @@ def criar_usuario(name, email, password):
     db.session.add(novo_usuario)
     db.session.commit()
 
-def ler_usuario_por_id(user_id):
-    usuario = User.query.get(user_id)
-    return usuario
-
 def ler_usuario_por_nome(name):
-    usuario = User.query.filter_by(name=name).first()
-    return usuario
+    return User.query.filter_by(name=name).first()
 
-def atualizar_usuario(user_id, name, email, password):
-    usuario = User.query.get(user_id)
-    usuario.name = name
-    usuario.email = email
-    usuario.password = hash_password(password)
-    db.session.commit()
+def autenticar_usuario(name, password):
+    usuario = ler_usuario_por_nome(name)
+    if usuario and usuario.password == hash_password(password):
+        return usuario
+    return None
 
-def excluir_usuario(user_id):
-    usuario = User.query.get(user_id)
-    db.session.delete(usuario)
-    db.session.commit()
-
-# Rota principal que exibe o dashboard financeiro
 # Rota principal que exibe o dashboard financeiro
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -119,14 +105,8 @@ def index():
     # Converte o gráfico para HTML
     graph_html = fig.to_html(full_html=False)
 
-
     # Renderiza o template HTML do dashboard, passando os dados do gráfico e das despesas
     return render_template('index.html', graph_html=graph_html, expenses=expenses)
-
-
-
-
-
 
 # Rota de login para autenticar os usuários
 @app.route('/login', methods=['GET', 'POST'])
@@ -139,8 +119,8 @@ def login():
     if request.method == 'POST':
         name = request.form['username']  # Alterado para corresponder ao campo 'username' do formulário HTML
         password = request.form['password']
-        usuario = ler_usuario_por_nome(name)
-        if usuario and usuario.password == hash_password(password):
+        usuario = autenticar_usuario(name, password)
+        if usuario:
             # Autentica o usuário e redireciona para o dashboard
             session['name'] = name
             session['user_id'] = usuario.user_id  # Armazena o ID do usuário na sessão
@@ -178,13 +158,9 @@ def register():
 # Rota de logout para encerrar a sessão do usuário
 @app.route('/logout', methods=['POST'])
 def logout():
-    try:
-        # Remove a chave 'name' da sessão, encerrando a sessão do usuário
-        session.pop('name')
-        session.pop('user_id')  # Remove também o ID do usuário da sessão
-    except KeyError:
-        # Se a chave 'name' não existir na sessão, não faz nada
-        pass
+    # Remove a chave 'name' da sessão, encerrando a sessão do usuário
+    session.pop('name', None)
+    session.pop('user_id', None)
     return redirect(url_for('login'))
 
 # Rota para adicionar receita
@@ -254,8 +230,6 @@ def delete_expense(expense_id):
     db.session.commit()
 
     return redirect(url_for('index'))
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
