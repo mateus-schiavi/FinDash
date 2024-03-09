@@ -88,32 +88,40 @@ def index():
                      'category': expense.category,
                      'payment_method': expense.payment_method} for expense in expenses]
 
+    incomes = Income.query.filter_by(user_id=session['user_id']).all()
+    
+    income_data = [{'income_id' : income.income_id,
+                    'description' : income.description,
+                    'value' : float(income.value),
+                    'date' : income.date,
+                    'source' : income.source} for income in incomes]
+    
     # Consulta orçamentos do usuário logado
     budgets = Budget.query.filter_by(user_id=session['user_id']).all()
     categories = [budget.category for budget in budgets]
     spending_limits = [budget.spending_limit for budget in budgets]
 
-    # Cria um gráfico com 3 séries de barras para despesas, orçamento e receitas
-    fig = go.Figure()
+    # # Cria um gráfico com 3 séries de barras para despesas, orçamento e receitas
+    # fig = go.Figure()
 
-    # Adiciona uma série de barras para despesas
-    fig.add_trace(go.Bar(x=categories, y=expense_data, name='Despesas', marker_color='#1f77b4', width=0.05))
+    # # Adiciona uma série de barras para despesas
+    # fig.add_trace(go.Bar(x=categories, y=expense_data, name='Despesas', marker_color='#1f77b4', width=0.05))
 
-    # Adiciona uma série de barras para o orçamento
-    fig.add_trace(go.Bar(x=categories, y=spending_limits, name='Orçamento', marker_color='#ff7f0e', width=0.05))
+    # # Adiciona uma série de barras para o orçamento
+    # fig.add_trace(go.Bar(x=categories, y=spending_limits, name='Orçamento', marker_color='#ff7f0e', width=0.05))
 
-    # Adiciona uma série de barras para receitas (valores fixos para demonstração)
-    revenue_values = [800] * len(categories)  # Usando 800 como valor fixo para todas as categorias
-    fig.add_trace(go.Bar(x=categories, y=revenue_values, name='Receitas', marker_color='#2ca02c', width=0.05))
+    # # Adiciona uma série de barras para receitas (valores fixos para demonstração)
+    # revenue_values = [800] * len(categories)  # Usando 800 como valor fixo para todas as categorias
+    # fig.add_trace(go.Bar(x=categories, y=revenue_values, name='Receitas', marker_color='#2ca02c', width=0.05))
 
-    # Define layout do gráfico
-    fig.update_layout(title='Dashboard Financeiro', xaxis_title='Categoria', yaxis_title='Valor')
+    # # Define layout do gráfico
+    # fig.update_layout(title='Dashboard Financeiro', xaxis_title='Categoria', yaxis_title='Valor')
 
-    # Converte o gráfico para HTML
-    graph_html = fig.to_html(full_html=False)
-
+    # # Converte o gráfico para HTML
+    # graph_html = fig.to_html(full_html=False)
+    # graph_html=graph_html
     # Renderiza o template HTML do dashboard, passando os dados do gráfico e das despesas
-    return render_template('index.html', graph_html=graph_html, expenses=expense_data)
+    return render_template('index.html', expenses=expense_data, incomes = income_data, budgets=budgets)
 
 
 # Rota de login para autenticar os usuários
@@ -238,6 +246,41 @@ def delete_expense(expense_id):
     db.session.commit()
 
     return redirect(url_for('index'))
+
+# Rota para excluir renda
+@app.route('/delete_income/<int:income_id>', methods=['POST'])
+def delete_income(income_id):
+    if 'name' not in session:
+        return redirect(url_for('login'))
+
+    # Verifica se a renda pertence ao usuário logado
+    income = Income.query.filter_by(income_id=income_id, user_id=session['user_id']).first()
+    if not income:
+        return redirect(url_for('index'))  # Redireciona se a renda não existir ou não pertencer ao usuário
+
+    # Remove a renda do banco de dados
+    db.session.delete(income)
+    db.session.commit()
+
+    return redirect(url_for('index'))
+
+# Rota para excluir orçamento
+@app.route('/delete_budget/<int:budget_id>', methods=['POST'])
+def delete_budget(budget_id):
+    if 'name' not in session:
+        return redirect(url_for('login'))
+
+    # Verifica se o orçamento pertence ao usuário logado
+    budget = Budget.query.filter_by(budget_id=budget_id, user_id=session['user_id']).first()
+    if not budget:
+        return redirect(url_for('index'))  # Redireciona se o orçamento não existir ou não pertencer ao usuário
+
+    # Remove o orçamento do banco de dados
+    db.session.delete(budget)
+    db.session.commit()
+
+    return redirect(url_for('index'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
