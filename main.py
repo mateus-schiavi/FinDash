@@ -7,15 +7,23 @@ import conexao
 app = Flask(__name__)
 
 # Chave secreta para proteger as sessões do Flask
+# Clave secreta para proteger las sesiones de Flask
+# Secret key to protect Flask's sessions
 app.secret_key = "15be550cae6051d0318d82bd5b2dbe8d6f54c0ecd8c93b31"
 
 # Configuração da URI do banco de dados
+# Ajustes de la URI de la base de datos
+# URI settings from the database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/projeto_integrador'
 
 # Inicialização do SQLAlchemy
+# Inicialización de SQLAlchemy
+# SQLAlchemy Initialization
 db = SQLAlchemy(app)
 
 # Definição das classes de modelo
+# Definición de clases de modelo
+# Defining model classes
 class User(db.Model):
     __tablename__ = 'users'
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -52,10 +60,14 @@ class Budget(db.Model):
     period = db.Column(db.String(50))
 
 # Função para hashear a senha do usuário
+# Función para hash de la contraseña del usuario
+# Function to hash the user's password
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 # Funções CRUD para a entidade de usuário
+# Funciones CRUD para la entidad de usuario
+# CRUD functions for the user entity
 def criar_usuario(name, email, password):
     hashed_password = hash_password(password)
     novo_usuario = User(name=name, email=email, password=hashed_password)
@@ -74,12 +86,18 @@ def autenticar_usuario(name, password):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     # Verifica se o usuário está autenticado
+    # Comprobar si el usuario está autenticado
+    # Check if the user is authenticated
     if 'name' not in session:
         return redirect(url_for('login'))
     
     # Consulta despesas do usuário logado
+    # Consultar gastos del usuario que ha iniciado sesión.
+    # Query expenses of the logged in user
     expenses = Expense.query.filter_by(user_id=session['user_id']).all()
 
+    # Extrai informações relevantes de cada objeto de despesa
+    # Extraer información relevante de cada objeto de Gasto
     # Extract relevant information from each Expense object
     expense_data = [{'expense_id': expense.expense_id,
                      'description': expense.description,
@@ -97,6 +115,8 @@ def index():
                     'source' : income.source} for income in incomes]
     
     # Consulta orçamentos do usuário logado
+    # Consultar presupuestos del usuario que ha iniciado sesión
+    # Query budgets from the logged in user
     budgets = Budget.query.filter_by(user_id=session['user_id']).all()
     categories = [budget.category for budget in budgets]
     spending_limits = [budget.spending_limit for budget in budgets]
