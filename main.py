@@ -71,7 +71,6 @@ def autenticar_usuario(name, password):
         return usuario
     return None
 
-# Rota principal que exibe o dashboard financeiro
 @app.route('/', methods=['GET', 'POST'])
 def index():
     # Verifica se o usuário está autenticado
@@ -80,6 +79,14 @@ def index():
     
     # Consulta despesas do usuário logado
     expenses = Expense.query.filter_by(user_id=session['user_id']).all()
+
+    # Extract relevant information from each Expense object
+    expense_data = [{'expense_id': expense.expense_id,
+                     'description': expense.description,
+                     'value': float(expense.value),
+                     'date': expense.date,
+                     'category': expense.category,
+                     'payment_method': expense.payment_method} for expense in expenses]
 
     # Consulta orçamentos do usuário logado
     budgets = Budget.query.filter_by(user_id=session['user_id']).all()
@@ -90,7 +97,7 @@ def index():
     fig = go.Figure()
 
     # Adiciona uma série de barras para despesas
-    fig.add_trace(go.Bar(x=categories, y=expenses, name='Despesas', marker_color='#1f77b4', width=0.05))
+    fig.add_trace(go.Bar(x=categories, y=expense_data, name='Despesas', marker_color='#1f77b4', width=0.05))
 
     # Adiciona uma série de barras para o orçamento
     fig.add_trace(go.Bar(x=categories, y=spending_limits, name='Orçamento', marker_color='#ff7f0e', width=0.05))
@@ -106,7 +113,8 @@ def index():
     graph_html = fig.to_html(full_html=False)
 
     # Renderiza o template HTML do dashboard, passando os dados do gráfico e das despesas
-    return render_template('index.html', graph_html=graph_html, expenses=expenses)
+    return render_template('index.html', graph_html=graph_html, expenses=expense_data)
+
 
 # Rota de login para autenticar os usuários
 @app.route('/login', methods=['GET', 'POST'])
