@@ -121,27 +121,27 @@ def index():
     categories = [budget.category for budget in budgets]
     spending_limits = [budget.spending_limit for budget in budgets]
 
-    # # Cria um gráfico com 3 séries de barras para despesas, orçamento e receitas
+    #  # Cria um gráfico com 3 séries de barras para despesas, orçamento e receitas
     # fig = go.Figure()
 
-    # # Adiciona uma série de barras para despesas
+    # # # Adiciona uma série de barras para despesas
     # fig.add_trace(go.Bar(x=categories, y=expense_data, name='Despesas', marker_color='#1f77b4', width=0.05))
 
-    # # Adiciona uma série de barras para o orçamento
+    # # # Adiciona uma série de barras para o orçamento
     # fig.add_trace(go.Bar(x=categories, y=spending_limits, name='Orçamento', marker_color='#ff7f0e', width=0.05))
 
-    # # Adiciona uma série de barras para receitas (valores fixos para demonstração)
+    # # # Adiciona uma série de barras para receitas (valores fixos para demonstração)
     # revenue_values = [800] * len(categories)  # Usando 800 como valor fixo para todas as categorias
     # fig.add_trace(go.Bar(x=categories, y=revenue_values, name='Receitas', marker_color='#2ca02c', width=0.05))
 
-    # # Define layout do gráfico
+    # # # Define layout do gráfico
     # fig.update_layout(title='Dashboard Financeiro', xaxis_title='Categoria', yaxis_title='Valor')
 
-    # # Converte o gráfico para HTML
+    # # # Converte o gráfico para HTML
     # graph_html = fig.to_html(full_html=False)
     # graph_html=graph_html
-    # Renderiza o template HTML do dashboard, passando os dados do gráfico e das despesas
-    return render_template('index.html', expenses=expense_data, incomes = income_data, budgets=budgets)
+    # #Renderiza o template HTML do dashboard, passando os dados do gráfico e das despesas
+    # return render_template('index.html', expenses=expense_data, incomes = income_data, budgets=budgets)
 
 
 # Rota de login para autenticar os usuários
