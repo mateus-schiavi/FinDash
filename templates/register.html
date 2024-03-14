@@ -1,41 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="UTF-8">
-        <title>Register</title>
-        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
 
-    <body class="bg-gray-100 flex justify-center items-center h-screen">
-        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <h1 class="text-2xl mb-4">Register</h1>
+<body class="bg-gray-900 flex justify-center items-center h-screen">
 
-            {% if error %}
-            <p class="text-red-500">{{ error }}</p>
-            {% endif %}
+    <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
 
-            <form action="{{ url_for('register') }}" method="post">
-                <div class="mb-4">
-                    <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Nome de Usuário:</label>
-                    <input type="text" id="name" name="name" class="border-gray-400 border p-2 w-full" required>
-                </div>
+        <img class="h-auto max-w-lg mx-auto"
+            src="https://cdn.freelogodesign.org/files/d70543f13825477d997d8554226d4e34/thumb/logo_200x200.png?v=638459345370000000"
+            alt="Logo do software Cadê meu caixa?">
 
-                <div class="mb-4">
-                    <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email:</label>
-                    <input type="email" id="email" name="email" class="border-gray-400 border p-2 w-full" required>
-                </div>
+        <h1 class="text-2xl mb-4">Cadastre-se</h1>
 
-                <div class="mb-4">
-                    <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Senha:</label>
-                    <input type="password" id="password" name="password" class="border-gray-400 border p-2 w-full"
-                        required>
-                </div>
+        {% if error %}
+        <p class="text-red-500">{{ error }}</p>
+        {% endif %}
 
-                <button type="submit"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Registrar</button>
-            </form>
-        </div>
-    </body>
+        <form action="{{ url_for('register') }}" method="post">
+            <div class="mb-4">
+                <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Nome de Usuário:</label>
+                <input type="text" id="name" name="name" class="border-gray-400 border p-2 w-full" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email:</label>
+                <input type="email" id="email" name="email" class="border-gray-400 border p-2 w-full" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Senha:</label>
+                <input type="password" id="password" name="password" class="border-gray-400 border p-2 w-full" required>
+            </div>
+
+            <button type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Registrar</button>
+        </form>
+
+        <!-- Adiciona um link para a página de registro -->
+        <p class="mt-4">Já possui uma conta?<a href="{{ url_for('login') }}" class="text-blue-500"> Realize o login aqui!</a></p>
+    </div>
+</body>
 
 </html>

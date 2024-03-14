@@ -1,170 +1,231 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 
-    <head>
-        <meta charset="UTF-8">
-        <title>Dashboard Financeiro</title>
-        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Financeiro</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
 
-    <body class="bg-gray-100 p-10">
-        <h1 class="text-2xl mb-4">Dashboard Financeiro</h1>
+        .form-input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
 
-        <div id="graph" class="mt-8">
-            {{ graph_html | safe }}
-        </div>
+        .btn {
+            background-color: #111827;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-        <!-- Formulário para adicionar renda -->
-        <form action="{{ url_for('add_income') }}" method="post" class="mt-8">
-            <h2 class="text-lg mb-2">Adicionar Renda</h2>
-            <label for="income_description">Descrição:</label>
-            <input type="text" id="income_description" name="description" required>
-            <label for="income_amount">Valor:</label>
-            <input type="text" id="income_value" name="value" required>
-            <label for="income_date">Data:</label>
-            <input type="date" id="income_date" name="date" required>
-            <label for="income_source">Fonte:</label>
-            <input type="text" id="income_source" name="source" required>
-            <button type="submit"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Adicionar
-                Renda</button>
-        </form>
+        .btn:hover {
+            background-color: #4b5563;
+        }
 
-        <!-- Formulário para adicionar despesa -->
-        <form action="{{ url_for('add_expense') }}" method="post" class="mt-8">
-            <h2 class="text-lg mb-2">Adicionar Despesa</h2>
-            <label for="expense_description">Descrição:</label>
-            <input type="text" id="expense_description" name="description" required>
-            <label for="expense_amount">Valor:</label>
-            <input type="text" id="expense_amount" name="value" required>
-            <label for="expense_date">Data:</label>
-            <input type="date" id="expense_date" name="date" required>
-            <label for="expense_category">Categoria:</label>
-            <input type="text" id="expense_category" name="category" required>
-            <label for="expense_payment_method">Método de Pagamento:</label>
-            <input type="text" id="expense_payment_method" name="payment_method" required>
-            <button type="submit"
-                class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">Adicionar
-                Despesa</button>
-        </form>
+        .btn-delete {
+            background-color: #b91c1c;
+        }
 
-        <!-- Formulário para adicionar orçamento -->
-        <form action="{{ url_for('add_budget') }}" method="post" class="mt-8">
-            <h2 class="text-lg mb-2">Adicionar Orçamento</h2>
-            <label for="budget_category">Categoria:</label>
-            <input type="text" id="budget_category" name="category" required>
-            <label for="budget_spending_limit">Limite de Gastos:</label>
-            <input type="text" id="budget_spending_limit" name="spending_limit" required>
-            <label for="budget_period">Período:</label>
-            <input type="text" id="budget_period" name="period" required>
-            <button type="submit"
-                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4">Adicionar
-                Orçamento</button>
-        </form>
+        .btn-delete:hover {
+            background-color: #7f1d1d;
+        }
 
-        <!-- Exibição das despesas -->
-        <div class="mt-8">
-            <h2 class="text-lg mb-2">Despesas</h2>
-            <table class="border-collapse border border-gray-400">
-                <thead>
-                    <tr>
-                        <th class="border border-gray-400 px-4 py-2">Descrição</th>
-                        <th class="border border-gray-400 px-4 py-2">Valor</th>
-                        <th class="border border-gray-400 px-4 py-2">Data</th>
-                        <th class="border border-gray-400 px-4 py-2">Categoria</th>
-                        <th class="border border-gray-400 px-4 py-2">Método de Pagamento</th>
-                        <th class="border border-gray-400 px-4 py-2">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for expense in expenses %}
-                    <tr>
-                        <td class="border border-gray-400 px-4 py-2">{{ expense.description }}</td>
-                        <td class="border border-gray-400 px-4 py-2">{{ expense.value }}</td>
-                        <td class="border border-gray-400 px-4 py-2">{{ expense.date }}</td>
-                        <td class="border border-gray-400 px-4 py-2">{{ expense.category }}</td>
-                        <td class="border border-gray-400 px-4 py-2">{{ expense.payment_method }}</td>
-                        <td class="border border-gray-400 px-4 py-2">
-                            <form action="{{ url_for('delete_expense', expense_id=expense.expense_id) }}" method="post">
-                                <button type="submit"
-                                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Excluir</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+        .btn-logout {
+            background-color: #b91c1c;
+        }
 
-        <!-- Exibição das rendas -->
-        <div class="mt-8">
-            <h2 class="text-lg mb-2">Rendas</h2>
-            <table class="border-collapse border border-gray-400">
-                <thead>
-                    <tr>
-                        <th class="border border-gray-400 px-4 py-2">Descrição</th>
-                        <th class="border border-gray-400 px-4 py-2">Valor</th>
-                        <th class="border border-gray-400 px-4 py-2">Data</th>
-                        <th class="border border-gray-400 px-4 py-2">Fonte</th>
-                        <th class="border border-gray-400 px-4 py-2">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for income in incomes %}
-                    <tr>
-                        <td class="border border-gray-400 px-4 py-2">{{ income.description }}</td>
-                        <td class="border border-gray-400 px-4 py-2">{{ income.value }}</td>
-                        <td class="border border-gray-400 px-4 py-2">{{ income.date }}</td>
-                        <td class="border border-gray-400 px-4 py-2">{{ income.source }}</td>
-                        <td class="border border-gray-400 px-4 py-2">
-                            <form action="{{ url_for('delete_income', income_id=income.income_id) }}" method="post">
-                                <button type="submit"
-                                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Excluir</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+        .btn-logout:hover {
+            background-color: #111827;
+        }
 
-        <!-- Exibição dos orçamentos -->
-        <div class="mt-8">
-            <h2 class="text-lg mb-2">Orçamentos</h2>
-            <table class="border-collapse border border-gray-400">
-                <thead>
-                    <tr>
-                        <th class="border border-gray-400 px-4 py-2">Categoria</th>
-                        <th class="border border-gray-400 px-4 py-2">Limite de Gastos</th>
-                        <th class="border border-gray-400 px-4 py-2">Período</th>
-                        <th class="border border-gray-400 px-4 py-2">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for budget in budgets %}
-                    <tr>
-                        <td class="border border-gray-400 px-4 py-2">{{ budget.category }}</td>
-                        <td class="border border-gray-400 px-4 py-2">{{ budget.spending_limit }}</td>
-                        <td class="border border-gray-400 px-4 py-2">{{ budget.period }}</td>
-                        <td class="border border-gray-400 px-4 py-2">
-                            <form action="{{ url_for('delete_budget', budget_id=budget.budget_id) }}" method="post">
-                                <button type="submit"
-                                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Excluir</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .logout-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-200 p-10">
+    <h1 class="text-2xl mb-4 text-center">Dashboard Financeiro </h1>
+
+    <div id="graph" class="mt-8">
+        {{ graph_html | safe }}
+    </div>
+
+    <!-- Formulário para adicionar renda -->
+    <form action="{{ url_for('add_income') }}" method="post" class="mt-8">
+        <h2 class="text-lg mb-2">Adicionar Renda</h2>
+        <label for="income_description" class="form-label">Descrição:</label>
+        <input type="text" id="income_description" name="description" required class="form-input">
+        <label for="income_amount" class="form-label">Valor:</label>
+        <input type="text" id="income_amount" name="value" required class="form-input">
+        <label for="income_date" class="form-label">Data:</label>
+        <input type="date" id="income_date" name="date" required class="form-input">
+        <label for="income_source" class="form-label">Fonte:</label>
+        <input type="text" id="income_source" name="source" required class="form-input">
+        <button type="submit" class="btn">Adicionar Renda</button>
+    </form>
+
+    <!-- Formulário para adicionar despesa -->
+    <form action="{{ url_for('add_expense') }}" method="post" class="mt-8">
+        <h2 class="text-lg mb-2">Adicionar Despesa</h2>
+        <label for="expense_description" class="form-label">Descrição:</label>
+        <input type="text" id="expense_description" name="description" required class="form-input">
+        <label for="expense_amount" class="form-label">Valor:</label>
+        <input type="text" id="expense_amount" name="value" required class="form-input">
+        <label for="expense_date" class="form-label">Data:</label>
+        <input type="date" id="expense_date" name="date" required class="form-input">
+        <label for="expense_category" class="form-label">Categoria:</label>
+        <input type="text" id="expense_category" name="category" required class="form-input">
+        <label for="expense_payment_method" class="form-label">Método de Pagamento:</label>
+        <input type="text" id="expense_payment_method" name="payment_method" required class="form-input">
+        <button type="submit" class="btn">Adicionar Despesa</button>
+    </form>
+
+    <!-- Formulário para adicionar orçamento -->
+    <form action="{{ url_for('add_budget') }}" method="post" class="mt-8">
+        <h2 class="text-lg mb-2">Adicionar Orçamento</h2>
+        <label for="budget_category" class="form-label">Categoria:</label>
+        <input type="text" id="budget_category" name="category" required class="form-input">
+        <label for="budget_spending_limit" class="form-label">Limite de Gastos:</label>
+        <input type="text" id="budget_spending_limit" name="spending_limit" required class="form-input">
+        <label for="budget_period" class="form-label">Período:</label>
+        <input type="text" id="budget_period" name="period" required class="form-input">
+        <button type="submit" class="btn">Adicionar Orçamento</button>
+    </form>
+
+    <!-- Exibição das despesas -->
+    <div class="mt-8">
+        <h2 class="text-lg mb-2">Despesas</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th>Data</th>
+                    <th>Categoria</th>
+                    <th>Método de Pagamento</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                <tr>
+                    <td>{{ expense.description }}</td>
+                    <td>{{ expense.value }}</td>
+                    <td>{{ expense.date }}</td>
+                    <td>{{ expense.category }}</td>
+                    <td>{{ expense.payment_method }}</td>
+                    <td>
+                        <form action="{{ url_for('delete_expense', expense_id=expense.expense_id) }}" method="post">
+                            <button type="submit" class="btn btn-delete">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Exibição das rendas -->
+    <div class="mt-8">
+        <h2 class="text-lg mb-2">Rendas</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th>Data</th>
+                    <th>Fonte</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for income in incomes %}
+                <tr>
+                    <td>{{ income.description }}</td>
+                    <td>{{ income.value }}</td>
+                    <td>{{ income.date }}</td>
+                    <td>{{ income.source }}</td>
+                    <td>
+                        <form action="{{ url_for('delete_income', income_id=income.income_id) }}" method="post">
+                            <button type="submit" class="btn btn-delete">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Exibição dos orçamentos -->
+    <div class="mt-8">
+        <h2 class="text-lg mb-2">Orçamentos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Categoria</th>
+                    <th>Limite de Gastos</th>
+                    <th>Período</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for budget in budgets %}
+                <tr>
+                    <td>{{ budget.category }}</td>
+                    <td>{{ budget.spending_limit }}</td>
+                    <td>{{ budget.period }}</td>
+                    <td>
+                        <form action="{{ url_for('delete_budget', budget_id=budget.budget_id) }}" method="post">
+                            <button type="submit" class="btn btn-delete">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 
-        <!-- Adiciona um botão de logout -->
+    <!-- Adiciona um botão de logout -->
+    <div class="logout-container">
         <form action="{{ url_for('logout') }}" method="post">
-            <button type="submit"
-                class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">Logout</button>
+            <button type="submit" class="btn btn-logout mt-8 text-lg mb-2">Sair</button>
         </form>
-    </body>
+    </div>
+</body>
 
 </html>
