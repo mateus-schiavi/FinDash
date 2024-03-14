@@ -141,7 +141,7 @@ def index():
     # graph_html = fig.to_html(full_html=False)
     # graph_html=graph_html
     # #Renderiza o template HTML do dashboard, passando os dados do gráfico e das despesas
-    # return render_template('index.html', expenses=expense_data, incomes = income_data, budgets=budgets)
+    return render_template('index.html', expenses=expense_data, incomes = income_data, budgets=budgets)
 
 
 # Rota de login para autenticar os usuários
