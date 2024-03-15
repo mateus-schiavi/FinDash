@@ -141,7 +141,10 @@ def index():
     # graph_html = fig.to_html(full_html=False)
     # graph_html=graph_html
     # #Renderiza o template HTML do dashboard, passando os dados do gráfico e das despesas
-    return render_template('index.html', expenses=expense_data, incomes = income_data, budgets=budgets)
+    
+    graph_html = renderizar_grafico()
+    
+    return render_template('index.html', expenses=expense_data, incomes = income_data, budgets=budgets, graph_html=graph_html)
 
 
 # Rota de login para autenticar os usuários
@@ -300,6 +303,30 @@ def delete_budget(budget_id):
     db.session.commit()
 
     return redirect(url_for('index'))
+
+def renderizar_grafico():
+    # Consulta despesas, orçamentos e receitas do usuário logado
+    expenses = Expense.query.filter_by(user_id=session['user_id']).all()
+    budgets = Budget.query.filter_by(user_id=session['user_id']).all()
+    incomes = Income.query.filter_by(user_id=session['user_id']).all()
+
+    # Extrai informações relevantes de cada objeto
+    expense_data = sum(expense.value for expense in expenses)
+    budget_data = sum(budget.spending_limit for budget in budgets)
+    income_data = sum(income.value for income in incomes)
+
+    # Cria um gráfico de rosca
+    fig = go.Figure()
+    fig.add_trace(go.Pie(labels=['Despesas', 'Orçamentos', 'Receitas'],
+                         values=[expense_data, budget_data, income_data],
+                         hole=0.3))
+
+    # Define layout do gráfico
+    fig.update_layout(title='Resumo Financeiro')
+
+    # Converte o gráfico para HTML
+    graph_html = fig.to_html(full_html=False)
+    return graph_html
 
 
 if __name__ == '__main__':
