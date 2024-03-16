@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 import plotly.graph_objs as go
+import os
+import plotly.io as pio
 import hashlib
 import datetime
 import conexao
@@ -299,13 +301,8 @@ def renderizar_grafico():
                          values=[expense_data, budget_data, income_data],
                          hole=0.3))
 
-    # Define layout do gráfico
-    fig.update_layout(title='Resumo Financeiro')
-
     # Converte o gráfico para HTML
     graph_html = fig.to_html(full_html=False)
     return graph_html
-
-
 if __name__ == '__main__':
     app.run(debug=True)
