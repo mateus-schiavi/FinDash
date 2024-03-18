@@ -295,14 +295,19 @@ def renderizar_grafico():
     budget_data = sum(budget.spending_limit for budget in budgets)
     income_data = sum(income.value for income in incomes)
 
+    # Definição de cores amigáveis para daltônicos
+    colors = ['#FF5733', '#28A745', '#3399FF']
+
     # Cria um gráfico de rosca
     fig = go.Figure()
     fig.add_trace(go.Pie(labels=['Despesas', 'Orçamentos', 'Receitas'],
                          values=[expense_data, budget_data, income_data],
-                         hole=0.3))
+                         hole=0.3,
+                         marker=dict(colors=colors)))
 
     # Converte o gráfico para HTML
     graph_html = fig.to_html(full_html=False)
     return graph_html
+
 if __name__ == '__main__':
     app.run(debug=True)
