@@ -80,6 +80,11 @@
 <body class="bg-gray-200 p-10">
     <h1 class="text-2xl mb-4 text-center">Dashboard Financeiro </h1>
 
+    <!-- Botão de download -->
+    <div class="text-center mb-8">
+        <a href="{{ url_for('download_data') }}" class="btn btn-primary">Baixar Dados em CSV</a>
+    </div>
+
     <div id="graph" class="mt-8">
         {{ graph_html | safe }}
     </div>

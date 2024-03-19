@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, make_response
 from flask_sqlalchemy import SQLAlchemy
 import plotly.graph_objs as go
 import os
+import csv
 import plotly.io as pio
 import hashlib
 import datetime
@@ -308,6 +309,56 @@ def renderizar_grafico():
     # Converte o gráfico para HTML
     graph_html = fig.to_html(full_html=False)
     return graph_html
+
+# Rota para baixar os dados em formato CSV
+@app.route('/download_data', methods=['GET'])
+def download_data():
+    # Consulta despesas, orçamentos e receitas do usuário logado
+    expenses = Expense.query.filter_by(user_id=session['user_id']).all()
+    budgets = Budget.query.filter_by(user_id=session['user_id']).all()
+    incomes = Income.query.filter_by(user_id=session['user_id']).all()
+
+    # Extrai informações relevantes de cada objeto
+    expense_data = [{'Description': expense.description,
+                     'Value': float(expense.value),
+                     'Date': expense.date,
+                     'Category': expense.category,
+                     'Payment Method': expense.payment_method} for expense in expenses]
+
+    budget_data = [{'Category': budget.category,
+                    'Spending Limit': float(budget.spending_limit),
+                    'Period': budget.period} for budget in budgets]
+
+    income_data = [{'Description': income.description,
+                    'Value': float(income.value),
+                    'Date': income.date,
+                    'Source': income.source} for income in incomes]
+
+    # Define os cabeçalhos para o arquivo CSV
+    csv_columns = ['Description', 'Value', 'Date', 'Category', 'Payment Method']
+    csv_budget_columns = ['Category', 'Spending Limit', 'Period']
+    csv_income_columns = ['Description', 'Value', 'Date', 'Source']
+
+    # Cria o arquivo CSV
+    csv_data = []
+    csv_data.append(csv_columns)
+    for row in expense_data:
+        csv_data.append([row[col] for col in csv_columns])
+    for row in budget_data:
+        csv_data.append([row[col] for col in csv_budget_columns])
+    for row in income_data:
+        csv_data.append([row[col] for col in csv_income_columns])
+
+    # Transforma os dados em formato de lista de listas para uma lista de strings, onde cada string representa uma linha do CSV
+    csv_data = [','.join(map(str, row)) for row in csv_data]
+
+    # Cria a resposta CSV
+    response = make_response('\n'.join(csv_data))
+    response.headers["Content-Disposition"] = "attachment; filename=financas.csv"
+
+    return response
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
