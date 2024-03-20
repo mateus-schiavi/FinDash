@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, m
 from flask_sqlalchemy import SQLAlchemy
 import plotly.graph_objs as go
 import os
+import pandas as pd
 import csv
 import plotly.io as pio
 import hashlib
@@ -358,7 +359,51 @@ def download_data():
 
     return response
 
+@app.route('/download_data_xlsx', methods=['GET'])
+def download_data_xlsx():
+    # Consulta despesas, orçamentos e receitas do usuário logado
+    expenses = Expense.query.filter_by(user_id=session['user_id']).all()
+    budgets = Budget.query.filter_by(user_id=session['user_id']).all()
+    incomes = Income.query.filter_by(user_id=session['user_id']).all()
 
+    # Extrai informações relevantes de cada objeto
+    expense_data = [{'Description': expense.description,
+                     'Value': float(expense.value),
+                     'Date': expense.date,
+                     'Category': expense.category,
+                     'Payment Method': expense.payment_method} for expense in expenses]
+
+    budget_data = [{'Category': budget.category,
+                    'Spending Limit': float(budget.spending_limit),
+                    'Period': budget.period} for budget in budgets]
+
+    income_data = [{'Description': income.description,
+                    'Value': float(income.value),
+                    'Date': income.date,
+                    'Source': income.source} for income in incomes]
+
+    # Cria DataFrames do pandas com os dados
+    df_expenses = pd.DataFrame(expense_data)
+    df_budgets = pd.DataFrame(budget_data)
+    df_incomes = pd.DataFrame(income_data)
+
+    # Cria um objeto ExcelWriter
+    writer = pd.ExcelWriter('financas.xlsx', engine='xlsxwriter')
+
+    # Escreve os DataFrames em diferentes planilhas do arquivo Excel
+    df_expenses.to_excel(writer, sheet_name='Despesas', index=False)
+    df_budgets.to_excel(writer, sheet_name='Orçamentos', index=False)
+    df_incomes.to_excel(writer, sheet_name='Receitas', index=False)
+
+    # Fecha o objeto ExcelWriter
+    writer.save()
+
+    # Cria a resposta para download do arquivo Excel
+    response = make_response(open('financas.xlsx', 'rb').read())
+    response.headers["Content-Disposition"] = "attachment; filename=financas.xlsx"
+    response.headers["Content-type"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
