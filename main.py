@@ -396,7 +396,7 @@ def download_data_xlsx():
     df_incomes.to_excel(writer, sheet_name='Receitas', index=False)
 
     # Fecha o objeto ExcelWriter
-    writer.save()
+    writer._save()
 
     # Cria a resposta para download do arquivo Excel
     response = make_response(open('financas.xlsx', 'rb').read())
