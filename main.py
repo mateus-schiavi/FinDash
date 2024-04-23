@@ -152,7 +152,8 @@ def login():
     else:
         # Renderiza o template HTML da página de login
         return render_template('login.html', error='')
-
+    
+# rota para redefinir a senha caso o usuário tenha esquecido
 @app.route('/reset_password', methods=['GET', 'POST'])
 def reset_password():
     if request.method == 'POST':
@@ -427,5 +428,7 @@ def download_data_xlsx():
 
     return response
 
+# Verifica se o script está sendo executado diretamente
 if __name__ == '__main__':
+    # Inicia o servidor Flask em modo de depuração
     app.run(debug=True)
