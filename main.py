@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, make_response
+from flask import Flask, render_template, request, redirect, url_for, session, make_response, flash
 from flask_sqlalchemy import SQLAlchemy
 import plotly.graph_objs as go
 import os
@@ -152,6 +152,28 @@ def login():
     else:
         # Renderiza o template HTML da página de login
         return render_template('login.html', error='')
+
+@app.route('/reset_password', methods=['GET', 'POST'])
+def reset_password():
+    if request.method == 'POST':
+        # Obtenha o nome de usuário e a nova senha do formulário
+        username = request.form['username']
+        new_password = request.form['password']
+
+        # Verifique se o nome de usuário existe no banco de dados
+        user = User.query.filter_by(name=username).first()
+        if not user:
+            flash('Nome de usuário inválido.', 'error')
+            return redirect(url_for('reset_password'))
+
+        # Atualize a senha do usuário no banco de dados
+        user.password = hash_password(new_password)
+        db.session.commit()
+
+        flash('Senha redefinida com sucesso.', 'success')
+        return redirect(url_for('login'))
+    else:
+        return render_template('reset_password.html')
 
 # Rota de registro para criar novas contas de usuário
 @app.route('/register', methods=['GET', 'POST'])
