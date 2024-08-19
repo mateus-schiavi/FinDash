@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, session, make_response, flash
+from flask import Flask, render_template, request, redirect, url_for, session, make_response, flash 
 from flask_sqlalchemy import SQLAlchemy
-import plotly.graph_objs as go
+import plotly.graph_objs as go 
 import os
-import pandas as pd
+import pandas as pd 
 import csv
 import plotly.io as pio
 import hashlib
