@@ -1,17 +1,17 @@
 Documentação do Sistema de Gestão Financeira com Flask
 
 Visão Geral: <br />
-Este sistema é uma aplicação web desenvolvida em Flask para gerenciar receitas, despesas e orçamentos pessoais. Os usuários podem se registrar, fazer login, adicionar e visualizar suas finanças, e acompanhar seus gastos e receitas através de gráficos gerados automaticamente.
+Este sistema é uma aplicação web desenvolvida em Flask para gerenciar receitas, despesas e orçamentos pessoais.<br /> Os usuários podem se registrar, fazer login, adicionar e visualizar suas finanças, e acompanhar seus gastos e receitas através de gráficos gerados automaticamente.
 
-Estrutura do Projeto
-Dependências
-Flask: Framework web para Python.
-SQLAlchemy: ORM (Object-Relational Mapping) para interação com o banco de dados.
-Plotly: Biblioteca de visualização para gerar gráficos.
-Pandas: Usado para manipulação de dados, principalmente no contexto da geração de gráficos.
-Configurações
-app.secret_key: Chave secreta para proteger as sessões do Flask.
-app.config['SQLALCHEMY_DATABASE_URI']: Configuração da URI para conexão com o banco de dados MySQL.
+Estrutura do Projeto: <br />
+Dependências <br />
+Flask: Framework web para Python. <br /> 
+SQLAlchemy: ORM (Object-Relational Mapping) para interação com o banco de dados. <br />
+Plotly: Biblioteca de visualização para gerar gráficos. <br />
+Pandas: Usado para manipulação de dados, principalmente no contexto da geração de gráficos. <br />
+Configurações: <br />
+app.secret_key: Chave secreta para proteger as sessões do Flask. <br />
+app.config['SQLALCHEMY_DATABASE_URI']: Configuração da URI para conexão com o banco de dados MySQL. <br />
 Modelos de Dados
 Classe User
 Tabela: users
