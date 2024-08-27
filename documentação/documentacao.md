@@ -126,5 +126,7 @@ Sessões:<br/> As sessões de usuário são protegidas pela chave secreta do Fla
 Como Executar<br/>
 Certifique-se de que o MySQL está instalado e rodando.<br/>
 Configure o banco de dados e ajuste a URI no app.config['SQLALCHEMY_DATABASE_URI'].<br/>
-Instale as dependências utilizando pip install -r requirements.txt.<br/>
-Execute a aplicação com flask run.<br/>
+Verifique as dependências utilizando pip install -r requirements.txt.<br/>
+Instale as dependências utilizando o comando pip install + nome da biblioteca.<br />
+Por exemplo: se for instalar Flask, o comando é pip install Flask.<br />
+Execute a aplicação com python main.py.<br/>
