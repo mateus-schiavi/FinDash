@@ -1,6 +1,6 @@
 Documentação do Sistema de Gestão Financeira com Flask
 
-Visão Geral
+Visão Geral: <br />
 Este sistema é uma aplicação web desenvolvida em Flask para gerenciar receitas, despesas e orçamentos pessoais. Os usuários podem se registrar, fazer login, adicionar e visualizar suas finanças, e acompanhar seus gastos e receitas através de gráficos gerados automaticamente.
 
 Estrutura do Projeto
