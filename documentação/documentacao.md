@@ -12,63 +12,65 @@ Pandas: Usado para manipulação de dados, principalmente no contexto da geraç�
 Configurações: <br />
 app.secret_key: Chave secreta para proteger as sessões do Flask. <br />
 app.config['SQLALCHEMY_DATABASE_URI']: Configuração da URI para conexão com o banco de dados MySQL. <br />
-Modelos de Dados
-Classe User
-Tabela: users
+Modelos de Dados <br />
+Classe User <br />
+Tabela: users <br />
 
-user_id: Identificador único do usuário (chave primária).
-name: Nome do usuário.
-email: Endereço de email do usuário.
-password: Senha do usuário (armazenada como hash).
-registration_date: Data de registro do usuário.
-Classe Expense
-Tabela: expenses
+user_id: Identificador único do usuário (chave primária). <br />
+name: Nome do usuário. <br />
+email: Endereço de email do usuário. <br />
+password: Senha do usuário (armazenada como hash). <br />
+registration_date: Data de registro do usuário. <br />
+Classe Expense <br />
+Tabela: expenses <br />
 
-expense_id: Identificador único da despesa (chave primária).
-user_id: Identificador do usuário que cadastrou a despesa (chave estrangeira).
-description: Descrição da despesa.
-value: Valor da despesa.
-date: Data da despesa.
-category: Categoria da despesa.
-payment_method: Método de pagamento utilizado.
-Classe Income
-Tabela: income
+expense_id: Identificador único da despesa (chave primária). <br />
+user_id: Identificador do usuário que cadastrou a despesa (chave estrangeira). <br />
+description: Descrição da despesa. <br />
+value: Valor da despesa. <br />
+date: Data da despesa. <br />
+category: Categoria da despesa. <br />
+payment_method: Método de pagamento utilizado. <br />
+Classe Income <br />
+Tabela: income <br />
 
-income_id: Identificador único da receita (chave primária).
-user_id: Identificador do usuário que cadastrou a receita (chave estrangeira).
-description: Descrição da receita.
-value: Valor da receita.
-date: Data da receita.
-source: Fonte da receita.
-Classe Budget
-Tabela: budgets
+income_id: Identificador único da receita (chave primária). <br />
+user_id: Identificador do usuário que cadastrou a receita (chave estrangeira).<br />
+description: Descrição da receita.<br />
+value: Valor da receita.<br />
+date: Data da receita.<br />
+source: Fonte da receita.<br />
+Classe Budget<br />
+Tabela: budgets<br />
 
-budget_id: Identificador único do orçamento (chave primária).
-user_id: Identificador do usuário que cadastrou o orçamento (chave estrangeira).
-category: Categoria do orçamento.
-spending_limit: Limite de gastos definido para a categoria.
-period: Período para o qual o orçamento é válido.
-Funções Utilitárias
-hash_password(password)
-Recebe a senha do usuário, aplica uma função hash SHA-256 e retorna o hash resultante. É utilizada para armazenar senhas de forma segura no banco de dados.
+budget_id: Identificador único do orçamento (chave primária).<br />
+user_id: Identificador do usuário que cadastrou o orçamento (chave estrangeira).<br />
+category: Categoria do orçamento.<br />
+spending_limit: Limite de gastos definido para a categoria.<br />
+period: Período para o qual o orçamento é válido.<br />
+Funções Utilitárias<br />
+hash_password(password)<br />
+Recebe a senha do usuário, aplica uma função hash SHA-256 e retorna o hash resultante.<br /> É utilizada para armazenar senhas de forma segura no banco de dados.
 
-Funções CRUD
-criar_usuario(name, email, password)
-Cria um novo usuário no banco de dados com os dados fornecidos.
+Funções CRUD<br />
+criar_usuario(name, email, password)<br />
+Cria um novo usuário no banco de dados com os dados fornecidos.<br />
 
-ler_usuario_por_nome(name)
-Busca um usuário no banco de dados pelo nome.
+ler_usuario_por_nome(name) <br />
+Busca um usuário no banco de dados pelo nome.<br />
 
-autenticar_usuario(name, password)
-Autentica um usuário verificando se a senha fornecida corresponde ao hash armazenado.
+autenticar_usuario(name, password)<br />
+Autentica um usuário verificando se a senha fornecida corresponde ao hash armazenado.<br />
 
-Rotas
-/ (Index)
-Métodos: GET, POST
-Descrição: Página principal do sistema. Exibe as receitas, despesas e orçamentos do usuário logado, além de um gráfico ilustrando as finanças.
-Ações: Requer autenticação. Redireciona para a página de login se o usuário não estiver logado.
-/login
-Métodos: GET, POST
+Rotas: <br />
+/ (Index)<br />
+Métodos: GET, POST<br />
+Descrição: Página principal do sistema. Exibe as receitas, despesas e orçamentos do usuário logado, além de um gráfico ilustrando as finanças. <br />
+Ações:<br />
+Requer autenticação.<br /> Redireciona para a página de login se o usuário não estiver logado.
+/login <br />
+Métodos: <br />
+GET, POST<br />
 Descrição: Página de login para autenticação de usuários.
 Ações: Se o usuário já estiver logado, redireciona para a página principal. Caso contrário, verifica as credenciais e, se corretas, autentica o usuário.
 /reset_password
