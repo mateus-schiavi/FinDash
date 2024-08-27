@@ -71,60 +71,60 @@ Requer autenticação.<br /> Redireciona para a página de login se o usuário n
 /login <br />
 Métodos: <br />
 GET, POST<br />
-Descrição: Página de login para autenticação de usuários.
-Ações: Se o usuário já estiver logado, redireciona para a página principal. Caso contrário, verifica as credenciais e, se corretas, autentica o usuário.
-/reset_password
-Métodos: GET, POST
-Descrição: Página para redefinição de senha. Permite que o usuário insira uma nova senha, que é então atualizada no banco de dados.
-Ações: Verifica se o nome de usuário existe e atualiza a senha.
-/register
-Métodos: GET, POST
-Descrição: Página de registro para novos usuários.
-Ações: Verifica se o nome de usuário já existe. Se não, cria uma nova conta de usuário e redireciona para a página de login.
-/logout
-Métodos: POST
-Descrição: Rota para logout. Encerra a sessão do usuário e redireciona para a página de login.
-/add_income
-Métodos: POST
-Descrição: Rota para adicionar uma nova receita ao sistema.
-Ações: Adiciona a receita ao banco de dados e redireciona para a página principal.
-/add_expense
-Métodos: POST
-Descrição: Rota para adicionar uma nova despesa ao sistema.
-Ações: Adiciona a despesa ao banco de dados e redireciona para a página principal.
-/add_budget
-Métodos: POST
-Descrição: Rota para adicionar um novo orçamento ao sistema.
-Ações: Adiciona o orçamento ao banco de dados e redireciona para a página principal.
-/delete_expense/<int:expense_id>
-Métodos: POST
-Descrição: Rota para excluir uma despesa existente.
-Ações: Verifica se a despesa pertence ao usuário logado, remove do banco de dados e redireciona para a página principal.
-/delete_income/<int:income_id>
-Métodos: POST
-Descrição: Rota para excluir uma receita existente.
-Ações: Verifica se a receita pertence ao usuário logado, remove do banco de dados e redireciona para a página principal.
-/delete_budget/<int:budget_id>
-Métodos: POST
-Descrição: Rota para excluir um orçamento existente.
-Ações: Verifica se o orçamento pertence ao usuário logado, remove do banco de dados e redireciona para a página principal.
-Funções de Visualização
-renderizar_grafico()
-Descrição: Gera um gráfico ilustrando as finanças do usuário (despesas, receitas e orçamentos) utilizando a biblioteca Plotly. Retorna o HTML do gráfico para ser embutido na página principal.
-Layout e Templates
-Os templates HTML utilizados são renderizados com o Flask e podem ser customizados conforme necessário. As rotas que renderizam templates incluem:
+Descrição:<br/> Página de login para autenticação de usuários. <br/>
+Ações:<br/> Se o usuário já estiver logado, redireciona para a página principal. <br/> Caso contrário, verifica as credenciais e, se corretas, autentica o usuário.
+/reset_password<br/>
+Métodos:<br/> GET, POST<br/>
+Descrição: <br/>Página para redefinição de senha.<br/> Permite que o usuário insira uma nova senha, que é então atualizada no banco de dados.
+Ações:<br/> Verifica se o nome de usuário existe e atualiza a senha.<br/>
+/register<br/>
+Métodos:<br/> GET, POST<br/>
+Descrição:<br/> Página de registro para novos usuários.<br/>
+Ações:<br/> Verifica se o nome de usuário já existe. <br/>Se não, cria uma nova conta de usuário e redireciona para a página de login.<br/>
+/logout<br/>
+Métodos:<br/> POST<br/>
+Descrição: <br/>Rota para logout. <br/>Encerra a sessão do usuário e redireciona para a página de login.
+/add_income<br/>
+Métodos:<br/> POST<br/>
+Descrição:<br/> Rota para adicionar uma nova receita ao sistema.
+Ações:<br/> Adiciona a receita ao banco de dados e redireciona para a página principal.
+/add_expense<br/>
+Métodos: POST<br/>
+Descrição:<br/> Rota para adicionar uma nova despesa ao sistema.<br/>
+Ações:<br/> Adiciona a despesa ao banco de dados e redireciona para a página principal.
+/add_budget<br/>
+Métodos:<br/> POST<br/>
+Descrição:<br/> Rota para adicionar um novo orçamento ao sistema.
+Ações:<br/> Adiciona o orçamento ao banco de dados e redireciona para a página principal.<br/>
+/delete_expense/<int:expense_id><br/>
+Métodos: <br/>POST<br/>
+Descrição:<br/> Rota para excluir uma despesa existente.<br/>
+Ações:<br/> Verifica se a despesa pertence ao usuário logado, remove do banco de dados e redireciona para a página principal.<br/>
+/delete_income/<int:income_id><br/>
+Métodos:<br/> POST<br/>
+Descrição: <br/>Rota para excluir uma receita existente.
+Ações: <br/>Verifica se a receita pertence ao usuário logado, remove do banco de dados e redireciona para a página principal.<br/>
+/delete_budget/<int:budget_id><br/>
+Métodos:<br/> POST<br/>
+Descrição:<br/> Rota para excluir um orçamento existente.
+Ações:<br/> Verifica se o orçamento pertence ao usuário logado, remove do banco de dados e redireciona para a página principal.<br/>
+Funções de Visualização<br/>
+renderizar_grafico()<br/>
+Descrição:<br/> Gera um gráfico ilustrando as finanças do usuário (despesas, receitas e orçamentos) utilizando a biblioteca Plotly.<br/> Retorna o HTML do gráfico para ser embutido na página principal.
+Layout e Templates<br/>
+Os templates HTML utilizados são renderizados com o Flask e podem ser customizados conforme necessário.<br/> As rotas que renderizam templates incluem:
 
-login.html
-register.html
-reset_password.html
-index.html
-Cada template HTML é responsável por apresentar a interface correspondente, como formulários de login/registro, tabelas de receitas/despesas, e a visualização gráfica das finanças.
+login.html<br/>
+register.html<br/>
+reset_password.html<br/>
+index.html<br/>
+Cada template HTML é responsável por apresentar a interface correspondente, como formulários de login/registro, tabelas de receitas/despesas, e a visualização gráfica das finanças.<br/>
 
-Segurança
-Senhas: As senhas dos usuários são armazenadas de forma segura no banco de dados utilizando hashing SHA-256.
-Sessões: As sessões de usuário são protegidas pela chave secreta do Flask, app.secret_key.
-Como Executar
-Certifique-se de que o MySQL está instalado e rodando.
-Configure o banco de dados e ajuste a URI no app.config['SQLALCHEMY_DATABASE_URI'].
-Instale as dependências utilizando pip install -r requirements.txt.
-Execute a aplicação com flask run.
+Segurança<br/>
+Senhas:<br/> As senhas dos usuários são armazenadas de forma segura no banco de dados utilizando hashing SHA-256.
+Sessões:<br/> As sessões de usuário são protegidas pela chave secreta do Flask, app.secret_key.
+Como Executar<br/>
+Certifique-se de que o MySQL está instalado e rodando.<br/>
+Configure o banco de dados e ajuste a URI no app.config['SQLALCHEMY_DATABASE_URI'].<br/>
+Instale as dependências utilizando pip install -r requirements.txt.<br/>
+Execute a aplicação com flask run.<br/>
