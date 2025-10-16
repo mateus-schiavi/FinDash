@@ -7,7 +7,7 @@ import csv
 import plotly.io as pio
 import hashlib
 import datetime
-import conexao
+import conexao as conexao
 app = Flask(__name__)
 
 # Chave secreta para proteger as sessões do Flask
