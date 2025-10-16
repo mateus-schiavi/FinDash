@@ -1,6 +1,6 @@
 # 💼 PI‑Univesp — Aplicação Web de Gestão Financeira Pessoal
 
-Durante o curso de **Engenharia da Computação da UNIVESP**, desenvolvi o **PI‑Univesp**, uma aplicação web voltada para o **controle financeiro pessoal**. O projeto nasceu da necessidade de criar uma ferramenta prática para que os usuários possam acompanhar suas **receitas, despesas e orçamentos**, com informações armazenadas de forma segura em um banco de dados MySQL.
+Durante o curso de **Engenharia da Computação da UNIVESP**, desenvolvi a **Aplicação Web de Gestão Financeira Pessoal**, uma aplicação web voltada para o **controle financeiro pessoal**. O projeto nasceu da necessidade de criar uma ferramenta prática para que os usuários possam acompanhar suas **receitas, despesas e orçamentos**, com informações armazenadas de forma segura em um banco de dados MySQL.
 
 A aplicação oferece um **painel interativo**, com gráficos dinâmicos gerados via Plotly, permitindo que os usuários visualizem rapidamente seus padrões de gastos e receitas. Funcionalidades como autenticação de usuários, cadastro e gerenciamento de despesas, receitas e orçamentos tornam a experiência completa e segura.
 
