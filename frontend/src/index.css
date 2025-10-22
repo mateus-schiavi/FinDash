@@ -1,0 +1,108 @@
+/* login.css */
+
+/* Corpo da página */
+body {
+  background-color: #1f2937; /* bg-gray-900 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* h-screen */
+  margin: 0;
+  font-family: sans-serif;
+}
+
+/* Container do login */
+.login-container {
+  background-color: #ffffff; /* bg-white */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* shadow-md */
+  border-radius: 0.5rem; /* rounded */
+  padding: 1.5rem 2rem 1.5rem 2rem; /* pt-6 pb-8 px-8 */
+  margin-bottom: 1rem; /* mb-4 */
+  max-width: 32rem; /* max-w-lg */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Logo */
+.login-container img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  height: auto;
+  max-width: 100%;
+}
+
+/* Título */
+.login-container h1 {
+  font-size: 1.5rem; /* text-2xl */
+  margin-bottom: 1rem; /* mb-4 */
+  text-align: center;
+}
+
+/* Labels */
+.login-container label {
+  display: block; /* block */
+  color: #374151; /* text-gray-700 */
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 700; /* font-bold */
+  margin-bottom: 0.5rem; /* mb-2 */
+}
+
+/* Inputs */
+.login-container input[type="text"],
+.login-container input[type="password"],
+.login-container input[type="email"] {
+  width: 100%; /* w-full */
+  padding: 0.5rem; /* p-2 */
+  border: 1px solid #9ca3af; /* border-gray-400 */
+  border-radius: 0.25rem;
+  margin-bottom: 1rem; /* mb-4 ou mb-6 */
+  box-sizing: border-box;
+}
+
+/* Botão */
+.login-container button {
+  background-color: #2563eb; /* bg-blue-600 */
+  color: white;
+  font-weight: 700;
+  padding: 0.5rem 1rem; /* py-2 px-4 */
+  border-radius: 0.25rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-container button:hover {
+  background-color: #1d4ed8; /* hover:bg-blue-700 */
+}
+
+/* Mensagens de erro */
+.login-container .error-message {
+  color: #dc2626; /* text-red-600 */
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Links */
+.login-container a {
+  color: #3b82f6; /* text-blue-500 */
+  text-decoration: none;
+}
+
+.login-container a:hover {
+  text-decoration: underline;
+}
+
+/* Parágrafos menores */
+.login-container p {
+  text-align: center;
+  margin-top: 1rem; /* mt-4 */
+  font-size: 0.875rem; /* text-sm */
+}
+
+/* Flex container para o botão */
+.login-container .flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
