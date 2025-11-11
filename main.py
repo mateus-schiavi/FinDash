@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, make_response, flash 
+from flask import Flask, render_template, request, redirect, url_for, session, make_response, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import plotly.graph_objs as go 
 import os
@@ -428,6 +428,46 @@ def download_data_xlsx():
 
     return response
 
+@app.route('/api/data', methods=['GET'])
+def get_data():
+    if 'name' not in session:
+        return jsonify({'error': 'Usuário não autenticado'})
+    
+    expenses = Expense.query.filter_by(user_id=session['user_id']).all()
+    incomes = Income.query.filter_by(user_id=session['user_id']).all()
+    budgets = Expense.query.filter_by(user_id=session['user_id']).all()
+    graph_html = renderizar_grafico()
+    
+    expense_data = [{
+        'expense_id': e.expense_id,
+        'descriptio': e.description,
+        'value': float(e.value),
+        'date': str(e.date),
+        'category': e.category,
+        'payment_method': e.payment_method        
+    } for e in expenses]
+    
+    income_data = [{
+        'income_id': i.income_id,
+        'description': i.description,
+        'value': float(i.value),
+        'date': str(i.date),
+        'source': i.source
+    } for i in incomes]
+    
+    budget_data = [{
+        'budget_id': b.budget_id,
+        'category': b.category,
+        'spending_limit': float(b.spending_limit),
+        'period': b.period
+    } for b in budgets]
+    
+    return jsonify({
+        'expenses': expense_data,
+        'incomes': income_data,
+        'budgets': budget_data,
+        'graph_html': graph_html
+    })
 # Verifica se o script está sendo executado diretamente
 if __name__ == '__main__':
     # Inicia o servidor Flask em modo de depuração
